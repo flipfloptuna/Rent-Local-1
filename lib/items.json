@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "title": "Kioti CS2220 Sub-Compact Tractor w/ Loader & Auger",
+    "category": "Equipment",
+    "pricePerDay": 100,
+    "image": "/items/tractor1.jpg",
+    "location": "Moyock, NC"
+  },
+  {
+    "id": "2",
+    "title": "Milwaukee M18 Fuel Cordless Nail Gun",
+    "category": "Tools",
+    "pricePerDay": 18,
+    "image": "/items/nailer.jpg",
+    "location": "Camden, NC"
+  },
+  {
+    "id": "3",
+    "title": "Inflatable Bounce House Castle",
+    "category": "Kids & Party",
+    "pricePerDay": 45,
+    "image": "/items/bounce.jpg",
+    "location": "Norfolk, VA"
+  },
+  {
+    "id": "4",
+    "title": "Window A/C Unit (10,000 BTU)",
+    "category": "Household",
+    "pricePerDay": 15,
+    "image": "/items/ac.jpg",
+    "location": "South Mills, NC"
+  },
+  {
+    "id": "5",
+    "title": "24\u2019 Extension Ladder",
+    "category": "Tools",
+    "pricePerDay": 10,
+    "image": "/items/ladder.jpg",
+    "location": "Chesapeake, VA"
+  },
+  {
+    "id": "6",
+    "title": "6 ft Round Folding Table",
+    "category": "Party",
+    "pricePerDay": 12,
+    "image": "/items/table.jpg",
+    "location": "Elizabeth City, NC"
+  }
+]

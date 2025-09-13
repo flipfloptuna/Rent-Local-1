@@ -18,12 +18,15 @@ export function Header() {
           {/* Use a transparent mark if you have it: /logo-mark.png.
              Otherwise this will fall back to /logo.png */}
           <Image
-            src="/logo-mark.png"
-            alt="Rent Local mark"
-            width={48}
-            height={48}
-            priority
-            onError={(e: any) => { e.currentTarget.src = "/logo.png"; }}
+           <Image
+  src="/logo.png"     // <-- use the file you already have
+  alt="Rent Local mark"
+  width={56}
+  height={56}
+  priority
+  className="rounded-md"
+/>
+
           />
           <div className="leading-tight">
             <div className="font-extrabold text-2xl md:text-3xl text-[#0F2940]">

@@ -7,50 +7,37 @@ import { useState } from "react";
 export function Header() {
   const [open, setOpen] = useState(false);
 
+  // Toggle this to show/hide the small text tagline under the title
+  const SHOW_TAGLINE = false;
+
   return (
     <header className="bg-white border-b border-slate-200">
-      {/* Top bar */}
       <div className="container-narrow flex items-center justify-between py-3">
-        {/* Logo + title */}
+        {/* LEFT: small logo mark + crisp text wordmark */}
         <Link href="/" className="flex items-center gap-3">
-          {/* Responsive logo: smaller on mobile, bigger on md+/lg+ */}
+          {/* Use a transparent mark if you have it: /logo-mark.png.
+             Otherwise this will fall back to /logo.png */}
           <Image
-            src="/logo.png"
-            alt="Rent Local logo"
-            width={56}         // mobile
-            height={56}
+            src="/logo-mark.png"
+            alt="Rent Local mark"
+            width={48}
+            height={48}
             priority
-            className="md:hidden"
+            onError={(e: any) => { e.currentTarget.src = "/logo.png"; }}
           />
-          <Image
-            src="/logo.png"
-            alt="Rent Local logo"
-            width={80}         // tablet
-            height={80}
-            priority
-            className="hidden md:block lg:hidden"
-          />
-          <Image
-            src="/logo.png"
-            alt="Rent Local logo"
-            width={120}        // desktop
-            height={120}
-            priority
-            className="hidden lg:block"
-          />
-
           <div className="leading-tight">
-            <div className="font-extrabold text-xl md:text-2xl lg:text-3xl text-[#0F2940]">
+            <div className="font-extrabold text-2xl md:text-3xl text-[#0F2940]">
               Rent Local
             </div>
-            {/* Hide the tiny slogan on very small screens to prevent wrapping */}
-            <div className="hidden sm:block text-xs md:text-sm text-slate-600">
-              Borrow. Don’t buy.
-            </div>
+            {SHOW_TAGLINE && (
+              <div className="hidden sm:block text-sm md:text-base text-slate-600">
+                Borrow. Don’t buy.
+              </div>
+            )}
           </div>
         </Link>
 
-        {/* Desktop nav */}
+        {/* DESKTOP NAV */}
         <nav className="hidden md:flex items-center gap-6">
           <Link href="/browse" className="text-sm md:text-base text-slate-700 hover:text-[#F59E0B]">Browse</Link>
           <Link href="/list" className="text-sm md:text-base text-slate-700 hover:text-[#F59E0B]">List an item</Link>
@@ -58,13 +45,12 @@ export function Header() {
           <a href="#" className="btn btn-primary px-4 md:px-5 py-2 md:text-base text-sm">Sign in</a>
         </nav>
 
-        {/* Mobile hamburger */}
+        {/* MOBILE HAMBURGER (unchanged behavior) */}
         <button
           aria-label="Toggle menu"
           className="md:hidden inline-flex items-center justify-center rounded-lg border border-slate-300 px-3 py-2"
           onClick={() => setOpen(!open)}
         >
-          {/* simple hamburger icon */}
           <div className="space-y-1">
             <span className="block h-0.5 w-5 bg-slate-800"></span>
             <span className="block h-0.5 w-5 bg-slate-800"></span>
@@ -73,7 +59,7 @@ export function Header() {
         </button>
       </div>
 
-      {/* Mobile dropdown menu */}
+      {/* MOBILE DROPDOWN (unchanged) */}
       {open && (
         <div className="md:hidden border-t border-slate-200">
           <div className="container-narrow py-3 flex flex-col gap-2">

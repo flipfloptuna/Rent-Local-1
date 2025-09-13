@@ -16,7 +16,7 @@ export default function WaitlistPage() {
   const [submitting, setSubmitting] = useState(false);
 
   // TODO: replace with your own Formspree endpoint
-  const FORMSPREE = "https://formspree.io/f/your-id-here";
+  const FORMSPREE = "https://formspree.io/f/mblabqjk";
 
   const spotsLeft = Math.max(OFFER_LIMIT - CURRENT_SIGNUPS, 0);
   const pct = Math.min((CURRENT_SIGNUPS / OFFER_LIMIT) * 100, 100);

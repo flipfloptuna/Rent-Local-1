@@ -1,10 +1,17 @@
 import { Client } from "pg";
 
+function getDbUrl() {
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL is not set in env");
+  return url;
+}
+
 export async function ensureSchema() {
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-  });
+  const client = new Client({ connectionString: getDbUrl() });
   await client.connect();
+
+  // Enable pgcrypto so gen_random_uuid() works everywhere
+  await client.query(`CREATE EXTENSION IF NOT EXISTS "pgcrypto";`);
 
   await client.query(`
     CREATE TABLE IF NOT EXISTS listings (
@@ -17,7 +24,7 @@ export async function ensureSchema() {
       images TEXT[] NOT NULL DEFAULT '{}',
       supports_delivery BOOLEAN NOT NULL DEFAULT false,
       status TEXT NOT NULL DEFAULT 'published',
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      created_at TIMESTAMPTZ DEFAULT now()
     );
   `);
 

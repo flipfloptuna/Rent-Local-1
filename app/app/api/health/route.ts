@@ -1,4 +1,5 @@
-// app/api/health/route.ts
+app/api/health/route.ts
+
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 

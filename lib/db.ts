@@ -1,1 +1,15 @@
+// lib/db.ts
+import { Pool } from 'pg'
+
+let _pool: Pool | null = null
+
+export function getDb() {
+  if (!_pool) {
+    _pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false } // typical for hosted Postgres
+    })
+  }
+  return _pool
+}
 

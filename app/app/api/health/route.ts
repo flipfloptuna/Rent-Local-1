@@ -1,19 +1,16 @@
-import { NextResponse } from "next/server";
-import { Client } from "pg";
-import { ensureSchema } from "../../../lib/db";
+// app/api/health/route.ts
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+import { NextResponse } from 'next/server';
+import { getDb } from '@/lib/db';
 
 export async function GET() {
   try {
-    await ensureSchema();
-    const client = new Client({ connectionString: process.env.DATABASE_URL });
-    await client.connect();
-    const r = await client.query("SELECT COUNT(*) FROM listings;");
-    await client.end();
-    return NextResponse.json({ ok: true, listingsCount: r.rows[0].count });
-  } catch (err: any) {
-    return NextResponse.json(
-      { ok: false, error: String(err?.message || err) },
-      { status: 500 }
-    );
+    const db = getDb();
+    const { rows } = await db.query('SELECT 1 as ok;');
+    return NextResponse.json({ ok: true, rows: rows?.length ?? 0 });
+  } catch (e: any) {
+    return NextResponse.json({ ok: false, error: e?.message || 'db error' }, { status: 500 });
   }
 }

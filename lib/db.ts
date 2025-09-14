@@ -7,9 +7,8 @@ export function getDb() {
   if (!_pool) {
     _pool = new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false } // typical for hosted Postgres
+      ssl: { rejectUnauthorized: false }
     })
   }
   return _pool
 }
-

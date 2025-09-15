@@ -2,18 +2,36 @@ export const dynamic = 'force-dynamic';
 
 async function getListings() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/listings?status=published`, {
-      cache: 'no-store',
-    });
-    if (!res.ok) return [];
+    // Relative URL so we don't depend on NEXT_PUBLIC_BASE_URL
+    const res = await fetch('/api/listings?status=published', { cache: 'no-store' });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`API ${res.status}: ${text}`);
+    }
     return await res.json();
-  } catch {
-    return [];
+  } catch (e: any) {
+    return { __error: e?.message || 'Failed to load listings' };
   }
 }
 
 export default async function BrowsePage() {
-  const listings = await getListings();
+  const data = await getListings();
+
+  // If API returned an error, show it instead of crashing the page
+  if (data && typeof data === 'object' && !Array.isArray(data) && data.__error) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-4">Browse</h1>
+        <div className="rounded-lg border p-4 bg-white">
+          <div className="font-semibold mb-2">Couldn’t load listings</div>
+          <pre className="text-sm whitespace-pre-wrap text-red-600">{data.__error}</pre>
+          <div className="text-sm mt-2 text-gray-600">Try again in a moment.</div>
+        </div>
+      </div>
+    );
+  }
+
+  const listings = Array.isArray(data) ? data : [];
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -25,20 +43,19 @@ export default async function BrowsePage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {listings.map((l: any) => {
             const firstImage =
-              Array.isArray(l?.images) && l.images.length > 0
-                ? l.images[0]
-                : null;
+              Array.isArray(l?.images) ? l.images[0] :
+              typeof l?.images === 'string' ? null : null; // tolerate bad shapes
 
             return (
               <div key={l.id} className="border rounded-xl p-4 bg-white">
-                {firstImage && (
-                  // eslint-disable-next-line @next/next/no-img-element
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {firstImage ? (
                   <img
                     src={firstImage}
-                    alt={l.title || 'Listing'}
+                    alt={l.title || 'listing'}
                     className="w-full h-44 object-cover rounded-lg mb-3"
                   />
-                )}
+                ) : null}
 
                 <h2 className="font-semibold">{l?.title ?? 'Untitled'}</h2>
                 <div className="text-sm text-gray-600">{l?.location ?? ''}</div>

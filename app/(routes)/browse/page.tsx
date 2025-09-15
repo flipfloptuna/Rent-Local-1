@@ -1,9 +1,22 @@
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+import { headers } from 'next/headers';
+
+function getBaseUrl() {
+  // Use public env if provided; otherwise derive from request headers
+  const envUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  if (envUrl) return envUrl.replace(/\/$/, '');
+  const h = headers();
+  const host = h.get('host') || '';
+  const proto = process.env.VERCEL ? 'https' : 'http';
+  return `${proto}://${host}`;
+}
 
 async function getListings() {
   try {
-    // Relative URL so we don't depend on NEXT_PUBLIC_BASE_URL
-    const res = await fetch('/api/listings?status=published', { cache: 'no-store' });
+    const base = getBaseUrl();
+    const res = await fetch(`${base}/api/listings?status=published`, { cache: 'no-store' });
     if (!res.ok) {
       const text = await res.text();
       throw new Error(`API ${res.status}: ${text}`);
@@ -17,7 +30,6 @@ async function getListings() {
 export default async function BrowsePage() {
   const data = await getListings();
 
-  // If API returned an error, show it instead of crashing the page
   if (data && typeof data === 'object' && !Array.isArray(data) && data.__error) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
@@ -36,15 +48,13 @@ export default async function BrowsePage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Browse</h1>
-
       {listings.length === 0 ? (
         <p>No published listings yet.</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {listings.map((l: any) => {
             const firstImage =
-              Array.isArray(l?.images) ? l.images[0] :
-              typeof l?.images === 'string' ? null : null; // tolerate bad shapes
+              Array.isArray(l?.images) && l.images.length ? l.images[0] : null;
 
             return (
               <div key={l.id} className="border rounded-xl p-4 bg-white">
@@ -56,7 +66,6 @@ export default async function BrowsePage() {
                     className="w-full h-44 object-cover rounded-lg mb-3"
                   />
                 ) : null}
-
                 <h2 className="font-semibold">{l?.title ?? 'Untitled'}</h2>
                 <div className="text-sm text-gray-600">{l?.location ?? ''}</div>
                 <div className="font-bold mt-1">

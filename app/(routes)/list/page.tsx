@@ -1,4 +1,4 @@
-import ListingForm from '@/components/ListingForm'
+import ListingForm from '../../../components/ListingForm';
 
 export default function ListItemPage() {
   return (
@@ -6,5 +6,5 @@ export default function ListItemPage() {
       <h1 className="text-2xl font-bold mb-6">List an item</h1>
       <ListingForm />
     </div>
-  )
+  );
 }

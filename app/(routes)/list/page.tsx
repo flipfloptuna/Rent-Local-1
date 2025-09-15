@@ -1,5 +1,4 @@
-import ListingForm from '@/components/ListingForm'
-
+import ListingForm from '../../../components/ListingForm';
 
 export default function ListItemPage() {
   return (

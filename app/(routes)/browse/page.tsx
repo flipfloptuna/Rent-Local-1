@@ -1,40 +1,33 @@
-"use client";
+async function getListings() {
+  const base = process.env.NEXT_PUBLIC_BASE_URL || ''
+  const res = await fetch(`${base}/api/listings?status=published`, { cache: 'no-store' })
+  if (!res.ok) return []
+  return res.json()
+}
 
-import { useMemo, useState } from "react";
-import { ItemCard } from "../../../components/ItemCard";
-import items from "../../../lib/items.json";
-
-export default function BrowsePage() {
-  const [q, setQ] = useState("");
-  const filtered = useMemo(() => {
-    const query = q.toLowerCase();
-    return items.filter((it) =>
-      it.title.toLowerCase().includes(query) ||
-      it.category.toLowerCase().includes(query) ||
-      it.location.toLowerCase().includes(query)
-    );
-  }, [q]);
+export default async function BrowsePage() {
+  const listings = await getListings()
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-semibold">Browse items</h1>
-      <div className="card p-4">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search by name, category, or location…"
-          className="w-full rounded-xl border border-slate-300 px-4 py-2 outline-none focus:ring-2 focus:ring-brand-orange"
-        />
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {filtered.map((it) => (
-          <ItemCard key={it.id} item={it} />
-        ))}
-        {filtered.length === 0 && (
-          <p className="text-slate-600">No items found. Try a different search.</p>
-        )}
-      </div>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Browse</h1>
+      {listings.length === 0 ? (
+        <p>No published listings yet.</p>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {listings.map((l: any) => (
+            <div key={l.id} className="border rounded-xl p-4 bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {Array.isArray(l.images) && l.images[0] ? (
+                <img src={l.images[0]} alt={l.title} className="w-full h-44 object-cover rounded-lg mb-3" />
+              ) : null}
+              <h2 className="font-semibold">{l.title}</h2>
+              <div className="text-sm text-gray-600">{l.location}</div>
+              <div className="font-bold mt-1">${l.pricePerDay}/day</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  );
+  )
 }

@@ -1,9 +1,10 @@
 // components/Nav.tsx
 import Link from "next/link";
-import { auth, signIn, signOut } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export default async function Nav() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
   return (
@@ -16,13 +17,15 @@ export default async function Nav() {
           <Link href="/feedback" className="hover:underline">Feedback</Link>
 
           {email ? (
-            <form action={async () => { "use server"; await signOut(); }}>
-              <button className="rounded-xl border px-3 py-1.5">Sign out</button>
-            </form>
+            // v4: simplest, use the built-in sign-out page
+            <Link href="/api/auth/signout" className="rounded-xl border px-3 py-1.5">
+              Sign out
+            </Link>
           ) : (
-            <form action={async () => { "use server"; await signIn("github"); }}>
-              <button className="rounded-xl border px-3 py-1.5 bg-black text-white">Sign in</button>
-            </form>
+            // v4: built-in sign-in page for GitHub
+            <Link href="/api/auth/signin" className="rounded-xl border px-3 py-1.5 bg-black text-white">
+              Sign in
+            </Link>
           )}
         </div>
       </div>

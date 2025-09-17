@@ -1,21 +1,25 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+// lib/auth.ts (NextAuth v4)
+import type { NextAuthOptions } from "next-auth";
+import GitHubProvider from "next-auth/providers/github";
 
-export const metadata: Metadata = {
-  title: "Rent Local — Borrow. Don't Buy.",
-  description: "A local marketplace to rent what you need, share what you don’t.",
+export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: "jwt" },
+  providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
+  ],
+  callbacks: {
+    async session({ session, token }) {
+      if (token?.email) {
+        session.user = { ...session.user, email: String(token.email) };
+      }
+      return session;
+    },
+    async jwt({ token }) {
+      return token;
+    },
+  },
 };
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body>
-        <Header />
-        <main className="container-narrow py-8">{children}</main>
-        <Footer />
-      </body>
-    </html>
-  );
-}

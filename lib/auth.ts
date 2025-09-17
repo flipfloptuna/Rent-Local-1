@@ -1,25 +1,26 @@
-// lib/auth.ts
-import NextAuth from "next-auth";
-import GitHub from "next-auth/providers/github";
+// lib/auth.ts (NextAuth v4 config)
+import type { NextAuthOptions } from "next-auth";
+import GitHubProvider from "next-auth/providers/github";
 
-export const { auth, handlers, signIn, signOut } = NextAuth({
-  providers: [GitHub],
+export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
+  providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
+  ],
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account && profile) {
-        token.name = (profile as any).name || token.name;
-        // keep email as stable user id
-        // @ts-expect-error
-        token.email = (profile as any).email || token.email;
-      }
-      return token;
-    },
     async session({ session, token }) {
       if (token?.email) {
         session.user = { ...session.user, email: String(token.email) };
       }
       return session;
     },
+    async jwt({ token }) {
+      // keep whatever email we have as stable id
+      return token;
+    },
   },
-});
+};
